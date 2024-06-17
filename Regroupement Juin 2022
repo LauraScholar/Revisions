@@ -1,0 +1,101 @@
+REGROUPEMENT JUIN 2022
+
+Epreuve 1
+
+1. Soient deux listes plates, la première étant une liste de noms et de la seconde une liste de cours, construire récursivement une liste comme suit:
+=> ((nom1 (cours1) (cours2) ... (coursN) ... (nom N (cours1) (cours2)...(coursN)))) 
+
+Listes test initiales :
+(setq liste_cours '(anglais maths physique histoire))
+(setq liste_noms '(james peter smith john))
+
+
+Fonction pour associer mettre individuellement chaque élément de liste_cours dans une sous-liste :
+
+(defun listeprep(liste)
+(cond
+((atom liste) nil)
+(t (cons (cons (car liste) nil) (listeprep (cdr liste))))))
+
+(setq liste_cours2 (listeprep liste_cours))
+=> ((anglais) (maths) (physique) (histoire))
+
+
+
+Fonction pour associer la liste des noms et des cours :
+
+
+(defun final(liste1 liste2)
+(cond
+((atom liste1) nil)
+(t (cons (cons (car liste1) (listeprep liste2)) (final (cdr liste1) liste2)))))
+
+(setq liste_noms_cours (final liste_noms liste_cours))
+=> ((james (anglais) (maths) (physique) (histoire))
+ (peter (anglais) (maths) (physique) (histoire))
+ (smith (anglais) (maths) (physique) (histoire))
+ (john (anglais) (maths) (physique) (histoire)))
+
+2. Etant donné une troisième liste : ((note1 note2... noteN)(note1 note2...noteN)...)
+contenant les notes obtenues par les étudiants, chaque sous-liste étant associée à un étudiant par sa position (la première sous-liste pour le premier étudiant, la deuxième pour le deuxième, etc.), et dans chaque sous-liste, chaque note est associée à un cours par sa position (la première note pour le premier cours, la deuxième pour le deuxième, etc...). 
+Construire à partir de la liste produite en (1) et de cette dernière liste :
+
+
+Listes test intiales:
+(setq liste_notes '((8 17 5 20) (4 12 10 10) (13 12 11 10) (16 18 10 15)))
+liste_noms_cours : ((james (anglais) (maths) (physique) (histoire))
+ (peter (anglais) (maths) (physique) (histoire))
+ (smith (anglais) (maths) (physique) (histoire))
+ (john (anglais) (maths) (physique) (histoire)))
+ 
+ 
+ (setq liste_noms_cours '((james (anglais) (maths) (physique) (histoire))
+ (peter (anglais) (maths) (physique) (histoire))
+ (smith (anglais) (maths) (physique) (histoire))
+ (john (anglais) (maths) (physique) (histoire))))
+ 
+ 
+ 
+
+
+Fonction intermédiaire avec 2 listes telles que ((maths) (éco) (chant)) et ((12) (15) (10)) => ((maths . 12) (éco . 15) (chant . 10))
+
+(defun constliste(liste1 liste2)
+(cond
+((atom liste1) nil)
+(t (cons (cons (caar liste1) (caar liste2)) (constliste (cdr liste1) (cdr liste2))))))
+
+Fonction qui réalise enfin la fonction demandée
+
+(defun listedemandee(liste1 liste2)
+(cond
+((atom liste1) nil)
+(t (cons (cons (caar liste1) (constliste (cdar liste1) (listeprep (car liste2)))) (listedemandee (cdr liste1) (cdr liste2))))))
+
+(setq derniereliste (listedemandee liste_noms_cours liste_notes))
+=>((james (anglais . 8) (maths . 17) (physique . 5) (histoire . 20))
+ (peter (anglais . 4) (maths . 12) (physique . 10) (histoire . 10))
+ (smith (anglais . 13) (maths . 12) (physique . 11) (histoire . 10))
+ (john (anglais . 16) (maths . 18) (physique . 10) (histoire . 15)))
+ 
+ 
+ Epreuve 2
+ 
+ A partir d'un arbre (liste quelconque), remplacez par zéro tous les atomes qui ne sont pas des nombres, à l'aide d'une fonction chirurgicale récursive.
+ 
+ Astuce 1 : Pour savoir si un élément est un nombren utilisez la fonction numberp (qui ramène nil si son argument n'est pas un nombre).
+ Astuce 2 : Commencez par écrire une fonction non chirurgicale (qui construit sans modifier)
+ 
+
+
+(defun listefinale2(liste)
+(cond
+((atom liste) nil)
+((and (listp (car liste)) (not (not (car liste)))) (listefinale2 (car liste)) (listefinale2 (cdr liste)))
+((not (numberp (car liste))) (rplaca liste 0) (listefinale2 (cdr liste)))
+(t (listefinale2 (cdr liste)))))
+
+(setq test '(a (a b nil 4) 5 r (a (8 a))))
+ => (0 (0 0 0 4) 5 0 (0 (8 0)))
+
+

@@ -1,0 +1,102 @@
+REGROUPEMENT SEPTEMBRE 2022A
+
+Epreuve 1
+
+1. Regroupez dans une liste tous ls noms différents.
+
+
+(setq liste '((jean . bertier) (cindy . bertier) (karine . patin) (jean . foret) (pauline . patin)))
+
+
+Fonction pour lister tous les noms
+
+(defun crealistnom(liste)
+(cond 
+((atom liste) nil)
+(t (cons (cdar liste) (crealistnom (cdr liste))))))
+
+(setq listenoms (crealistnom liste))
+=> (bertier bertier patin foret patin)
+
+(defun stopdoublons (liste)
+(cond
+((atom liste) nil)
+((member (car liste) (cdr liste)) (stopdoublons (cdr liste)))
+(t (cons (car liste) (stopdoublons (cdr liste))))))
+
+(setq listenomsuniques (stopdoublons listenoms))
+
+=>(bertier foret patin)
+
+
+Fonction pour lister tous les prénoms
+
+(defun crealistprenom(liste)
+(cond
+((atom liste) nil)
+(t (cons (caar liste) (crealistprenom (cdr liste))))))
+
+(setq listeprenoms (crealistprenom liste))
+
+=> (jean cindy karine jean pauline)
+
+(setq listeprenomsuniques (stopdoublons listeprenoms))
+
+=> (cindy karine jean pauline)
+
+2. Pour chaque nom, comptez le nombre de personnes ayant un ce nom et générez la liste :
+((nom . nombre) (nom . nombre)...)
+
+
+
+
+Fonction qui calcul le nombre de fois qu'apparaît un nom dans une liste.
+
+(defun nbfoisnom(nom liste &optional (resultat 0))
+(cond
+((atom liste) resultat)
+((eq nom (car liste)) (nbfoisnom nom (cdr liste) (+ 1 resultat)))
+(t (nbfoisnom nom (cdr liste) resultat))))
+
+
+Fonction qui crée la liste
+
+(defun listefinale(liste1 liste2)
+(cond
+((atom liste1) nil)
+(t (cons (cons (car liste1) (nbfoisnom (car liste1) liste2)) (listefinale (cdr liste1) liste2)))))
+
+(setq solution (listefinale listenomsuniques listenoms))
+
+=> ((bertier . 2) (foret . 1) (patin . 2))
+
+Epreuve 2 A partir d'un arbre (liste quelconque) ne contenant que des noms (pas de nombres), remplacez chaque sous-liste terminale (ne contenant pas de sous-liste) par le nombre d'éléments de cette sous-liste, à l'aide d'une fonction chirurgicale récursive. Nil sera considéré comme un atome, pas comme une liste. 
+
+Fonction qui détecte la présence de sous-liste. 
+
+(defun detectliste(liste)
+(cond
+((atom liste) nil)
+((listp (car liste)) t)
+(t (detectliste (cdr liste)))))
+
+Fonction lisp
+
+
+
+
+
+(defun listefinale(liste)
+(cond
+((atom liste) nil) 
+((and (listp (car liste)) (not (not (car liste))))
+(cond 
+((detectliste(car liste)) (listefinale (car liste)) (listefinale (cdr liste)))
+(t (rplaca liste (length (car liste))) (listefinale (cdr liste)))))
+(t (listefinale (cdr liste)))))
+
+
+
+'
+
+
