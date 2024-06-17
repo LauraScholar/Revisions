@@ -1,1 +1,0 @@
-Sont regroupés ici les corrigés des épreuves de Programmation Fonctionnelle.
